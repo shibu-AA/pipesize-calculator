@@ -84,4 +84,3 @@ if st.button("計算"):
 
     st.write("### 推奨配管サイズ")
     st.success(pipe_name)
-a = 1
