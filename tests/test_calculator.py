@@ -1,5 +1,6 @@
 from calc.calculator import select_pipe
 
+
 def test_select_pipe_air_basic():
     input_data = {
         "gas": "Air",
