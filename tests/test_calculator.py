@@ -16,4 +16,4 @@ def test_select_pipe_air_basic():
 
     recommended_pipe_name, delta_p, optimal_pipe_name = select_pipe(input_data)
 
-    assert recommended_pipe_name == "40A"
+    assert optimal_pipe_name == "40A"
