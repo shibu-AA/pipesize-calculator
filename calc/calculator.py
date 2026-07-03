@@ -23,7 +23,7 @@ def select_pipe(input_data):
     fitting_counts = input_data["fitting_counts"]
 
     gas_table = pd.read_csv("data/gas/properties.csv")
-    M = gas_table.loc[gas_table["化学式"] == gas, "分子量(Kg/Kmol)"].iloc[0]
+    M = gas_table.loc[gas_table["化学式"] == gas, "分子量"].iloc[0]
 
     actual_flow = (
         (flow_rate / (1000 * 60))
