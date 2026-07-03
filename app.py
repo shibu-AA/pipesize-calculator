@@ -2,17 +2,6 @@ import streamlit as st
 import pandas as pd
 from calc.calculator import select_pipe
 
-input_data = {
-    "gas": None,
-    "flow_rate": None,
-    "inlet_pressure": None,
-    "outlet_pressure": None,
-    "temperature": None,
-    "velocity_limit": None,
-    "schedule": None,
-    "pipe_length": None,
-}
-
 fitting_names = [
     "90°エルボ(2･1/2まで)",
     '90°エルボ(3"～6")',
@@ -81,6 +70,9 @@ pipe_length = st.number_input(
     "⑧ 管の長さ (mm)", min_value=0.0, value=1000.0, step=100.0
 )
 
+# ⑨ 係数
+coefficient = st.number_input("⑨ 係数", min_value=0.0, value=1.0, step=0.1)
+
 st.markdown("#### 継手入力")
 
 # 継ぎ手の数量
@@ -102,6 +94,7 @@ if st.button("計算"):
         "velocity_limit": velocity_limit,
         "schedule": schedule,
         "pipe_length": pipe_length,
+        "coefficient": coefficient,
         "fitting_counts": fitting_counts,
     }
 
