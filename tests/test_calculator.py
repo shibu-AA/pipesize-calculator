@@ -3,7 +3,7 @@ from calc.calculator import select_pipe
 
 def test_select_pipe_air_basic():
     input_data = {
-        "gas": "Air",
+        "molecular_weight": 28.97,
         "flow_rate": 1000,
         "inlet_pressure": 0.9,
         "outlet_pressure": 0.7,
@@ -14,6 +14,6 @@ def test_select_pipe_air_basic():
         "fitting_counts": [100, 0, 0, 0, 30, 10, 0],
     }
 
-    result = select_pipe(input_data)
+    recommended_pipe_name, delta_p, optimal_pipe_name = select_pipe(input_data)
 
-    assert result == "40A"
+    assert optimal_pipe_name == "40A"

@@ -12,7 +12,7 @@ fitting_equivalent_lengths = [30, 40, 15, 18, 60, 45, 60]
 
 def select_pipe(input_data):
 
-    gas = input_data["gas"]
+    molecular_weight = input_data["molecular_weight"]
     flow_rate = input_data["flow_rate"]
     inlet_pressure = input_data["inlet_pressure"]
     outlet_pressure = input_data["outlet_pressure"]
@@ -21,9 +21,6 @@ def select_pipe(input_data):
     schedule = input_data["schedule"]
     pipe_length = input_data["pipe_length"]
     fitting_counts = input_data["fitting_counts"]
-
-    gas_table = pd.read_csv("data/gas/properties.csv")
-    M = gas_table.loc[gas_table["化学式"] == gas, "分子量(Kg/Kmol)"].iloc[0]
 
     actual_flow = (
         (flow_rate / (1000 * 60))
@@ -38,7 +35,7 @@ def select_pipe(input_data):
 
     for _, row in filtered.iterrows():
         fluid_density = ((inlet_pressure * 10.1972 + 1.033) / 1.033 * 101325) / (
-            8314.3 * 293 / M
+            8314.3 * 293 / molecular_weight
         )
         n = sum(
             [
@@ -57,5 +54,5 @@ def select_pipe(input_data):
         )
 
         if outlet_pressure < inlet_pressure - delta_P * 0.0980665:
-            return row["呼び径"]
-    return "ERROR"
+            return filtered.iloc[0]["呼び径"], delta_P, row["呼び径"]
+    return None, None, None

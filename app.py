@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 from calc.calculator import select_pipe
 
 input_data = {
@@ -22,14 +23,38 @@ fitting_names = [
     '弁(3"～6")',
 ]
 
+gas_table = pd.read_csv("data/gas/properties.csv")
+
 st.set_page_config(page_title="配管サイズ自動算定", page_icon="🛠️", layout="centered")
 
 st.title("配管サイズ自動算定")
 
-st.markdown("### 入力条件")
+st.markdown("#### 入力条件")
 
 # ① ガス名
-gas = st.selectbox("① ガス名", ["Air"])
+input_type = st.radio("① ガスの種類", ["名称", "化学式", "分子量指定"])
+if input_type == "名称":
+    gas = st.selectbox("名称", gas_table["名称"].tolist())
+    molecular_weight = gas_table.loc[gas_table["名称"] == gas, "分子量"].iloc[0]
+    gas_properties = gas_table.loc[
+        gas_table["名称"] == gas, ["可燃性", "自燃性", "支燃性", "毒性", "腐食性"]
+    ].iloc[0]
+elif input_type == "化学式":
+    gas = st.selectbox("化学式", gas_table["化学式"].tolist())
+    molecular_weight = gas_table.loc[gas_table["化学式"] == gas, "分子量"].iloc[0]
+    gas_properties = gas_table.loc[
+        gas_table["化学式"] == gas, ["可燃性", "自燃性", "支燃性", "毒性", "腐食性"]
+    ].iloc[0]
+elif input_type == "分子量指定":
+    molecular_weight = st.number_input("分子量", min_value=0.0, value=28.0, step=1.0)
+    gas_properties = pd.Series(
+        [0, 0, 0, 0, 0], index=["可燃性", "自燃性", "支燃性", "毒性", "腐食性"]
+    )
+
+st.write("気体の性質 ")
+properties = ["可燃性", "自燃性", "支燃性", "毒性", "腐食性"]
+selected = [name for name in properties if gas_properties[name] == 1]
+st.info("・".join(selected))
 
 # ② 流量
 flow_rate = st.number_input("② 流量 (Nm³/h)", min_value=0.0, value=1000.0, step=10.0)
@@ -56,7 +81,7 @@ pipe_length = st.number_input(
     "⑧ 管の長さ (mm)", min_value=0.0, value=1000.0, step=100.0
 )
 
-st.markdown("### 継手入力")
+st.markdown("#### 継手入力")
 
 # 継ぎ手の数量
 fitting_counts = []
@@ -69,7 +94,7 @@ for i, name in enumerate(fitting_names):
 if st.button("計算"):
 
     input_data = {
-        "gas": gas,
+        "molecular_weight": molecular_weight,
         "flow_rate": flow_rate,
         "inlet_pressure": inlet_pressure,
         "outlet_pressure": outlet_pressure,
@@ -80,7 +105,16 @@ if st.button("計算"):
         "fitting_counts": fitting_counts,
     }
 
-    pipe_name = select_pipe(input_data)
+    recommended_pipe_name, delta_P, optimal_pipe_name = select_pipe(input_data)
 
-    st.write("### 推奨配管サイズ")
-    st.success(pipe_name)
+    if recommended_pipe_name is None:
+        st.error("Error")
+    else:
+        st.write("#### 推奨配管サイズ")
+        st.info(recommended_pipe_name)
+
+        st.write("#### 圧力損失")
+        st.info(f"{delta_P:.2f} kg/cm²")
+
+        st.write("#### 最適配管サイズ")
+        st.success(optimal_pipe_name)
