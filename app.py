@@ -5,7 +5,7 @@ from calc.calculator import select_pipe
 fitting_names = [
     "90°エルボ(2･1/2まで)",
     '90°エルボ(3"～6")',
-    "90°ベント",
+    "90°ベンド",
     "45°エルボ",
     "チーズ",
     "弁(2･1/2まで)",
@@ -21,12 +21,13 @@ st.title("配管サイズ自動算定")
 st.markdown("#### 入力条件")
 
 # ① ガス名
-input_type = st.radio("① ガスの種類", ["名称", "化学式", "分子量指定"])
+input_type = st.radio("① ガスの種類", ["名称", "化学式", "その他"])
 if input_type == "名称":
-    gas = st.selectbox("名称", gas_table["名称"].tolist())
-    molecular_weight = gas_table.loc[gas_table["名称"] == gas, "分子量"].iloc[0]
+    gas = st.selectbox("名称", gas_table["名称＋化学式"].tolist())
+    molecular_weight = gas_table.loc[gas_table["名称＋化学式"] == gas, "分子量"].iloc[0]
     gas_properties = gas_table.loc[
-        gas_table["名称"] == gas, ["可燃性", "自燃性", "支燃性", "毒性", "腐食性"]
+        gas_table["名称＋化学式"] == gas,
+        ["可燃性", "自燃性", "支燃性", "毒性", "腐食性"],
     ].iloc[0]
 elif input_type == "化学式":
     gas = st.selectbox("化学式", gas_table["化学式"].tolist())
@@ -34,7 +35,7 @@ elif input_type == "化学式":
     gas_properties = gas_table.loc[
         gas_table["化学式"] == gas, ["可燃性", "自燃性", "支燃性", "毒性", "腐食性"]
     ].iloc[0]
-elif input_type == "分子量指定":
+elif input_type == "その他":
     molecular_weight = st.number_input("分子量", min_value=0.0, value=28.0, step=1.0)
     gas_properties = pd.Series(
         [0, 0, 0, 0, 0], index=["可燃性", "自燃性", "支燃性", "毒性", "腐食性"]
