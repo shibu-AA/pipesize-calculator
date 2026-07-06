@@ -21,19 +21,15 @@ st.title("配管サイズ自動算定")
 st.markdown("#### 入力条件")
 
 # ① ガス名
-input_type = st.radio("① ガスの種類", ["名称", "化学式", "その他"])
-if input_type == "名称":
-    gas = st.selectbox("名称", gas_table["名称＋化学式"].tolist())
-    molecular_weight = gas_table.loc[gas_table["名称＋化学式"] == gas, "分子量"].iloc[0]
+input_type = st.radio("① ガスの種類", ["リスト", "その他"])
+if input_type == "リスト":
+    gas = st.selectbox("気体名", gas_table["気体名＋化学式"].tolist())
+    molecular_weight = gas_table.loc[gas_table["気体名＋化学式"] == gas, "分子量"].iloc[
+        0
+    ]
     gas_properties = gas_table.loc[
-        gas_table["名称＋化学式"] == gas,
+        gas_table["気体名＋化学式"] == gas,
         ["可燃性", "自燃性", "支燃性", "毒性", "腐食性"],
-    ].iloc[0]
-elif input_type == "化学式":
-    gas = st.selectbox("化学式", gas_table["化学式"].tolist())
-    molecular_weight = gas_table.loc[gas_table["化学式"] == gas, "分子量"].iloc[0]
-    gas_properties = gas_table.loc[
-        gas_table["化学式"] == gas, ["可燃性", "自燃性", "支燃性", "毒性", "腐食性"]
     ].iloc[0]
 elif input_type == "その他":
     molecular_weight = st.number_input("分子量", min_value=0.0, value=28.0, step=1.0)
@@ -47,7 +43,7 @@ selected = [name for name in properties if gas_properties[name] == 1]
 st.info("・".join(selected))
 
 # ② 流量
-flow_rate = st.number_input("② 流量 (Nm³/h)", min_value=0.0, value=1000.0, step=10.0)
+flow_rate = st.number_input("② 流量 (L/min)", min_value=0.0, value=1000.0, step=10.0)
 
 # ③ 入口圧力
 inlet_pressure = st.number_input("③ 入口圧力 (MPa)", min_value=0.0, value=0.9, step=0.1)
@@ -61,10 +57,12 @@ outlet_pressure = st.number_input(
 temperature = st.number_input("⑤ 基準温度 (℃)", value=20.0, step=1.0)
 
 # ⑥ 許容流速
-velocity_limit = st.number_input("⑥ 許容流速 (m/s)", min_value=0.0, value=8.0, step=0.5)
+velocity_limit = st.number_input(
+    "⑥ 許容流速 (m/s)", min_value=0.0, value=10.0, step=0.5
+)
 
 # ⑦ 配管規格
-schedule = st.selectbox("⑦ 配管規格", ["BA", "sch5", "sch10"])
+schedule = st.selectbox("⑦ 配管規格", ["sch10", "sch5", "BA"])
 
 # ⑧ 管の長さ
 pipe_length = st.number_input(
@@ -72,7 +70,9 @@ pipe_length = st.number_input(
 )
 
 # ⑨ 係数
-coefficient = st.number_input("⑨ 係数", min_value=0.0, value=1.0, step=0.1)
+coefficient = st.number_input(
+    "⑨ 係数", min_value=0.0, max_value=1.0, value=0.4, step=0.1
+)
 
 st.markdown("#### 継手入力")
 
