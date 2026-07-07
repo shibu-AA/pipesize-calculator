@@ -11,6 +11,7 @@ def test_select_pipe_air_basic():
         "velocity_limit": 8,
         "schedule": "sch5",
         "pipe_length": 1000,
+        "coefficient": 1.0,
         "fitting_counts": [100, 0, 0, 0, 30, 10, 0],
     }
 
