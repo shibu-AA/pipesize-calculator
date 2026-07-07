@@ -20,7 +20,10 @@ def select_pipe(input_data):
     velocity_limit = input_data["velocity_limit"]
     schedule = input_data["schedule"]
     pipe_length = input_data["pipe_length"]
+    coefficient = input_data["coefficient"]
     fitting_counts = input_data["fitting_counts"]
+
+    flow_rate = flow_rate * coefficient
 
     actual_flow = (
         (flow_rate / (1000 * 60))
