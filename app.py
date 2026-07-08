@@ -119,7 +119,7 @@ if st.button("計算"):
         st.write("#### 最適配管サイズの圧力損失")
         st.info(f"{result['delta_P']:.2f} kg/cm²")
 
-        pdf = create_pdf(result)
+        pdf = create_pdf(input_data, result)
 
         st.download_button(
             "PDFダウンロード",
