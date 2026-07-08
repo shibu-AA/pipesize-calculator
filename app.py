@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from calc.calculator import select_pipe
+from pdf.report import create_pdf
 
 fitting_names = [
     "90°エルボ(2･1/2まで)",
@@ -43,7 +44,9 @@ selected = [name for name in properties if gas_properties[name] == 1]
 st.info("・".join(selected))
 
 # ② 流量
-flow_rate = st.number_input("② 流量 (L/min)", min_value=0.0, value=1000.0, step=10.0)
+max_flow_rate = st.number_input(
+    "② 流量 (L/min)", min_value=0.0, value=1000.0, step=10.0
+)
 
 # ③ 入口圧力
 inlet_pressure = st.number_input("③ 入口圧力 (MPa)", min_value=0.0, value=0.9, step=0.1)
@@ -88,7 +91,7 @@ if st.button("計算"):
 
     input_data = {
         "molecular_weight": molecular_weight,
-        "flow_rate": flow_rate,
+        "max_flow_rate": max_flow_rate,
         "inlet_pressure": inlet_pressure,
         "outlet_pressure": outlet_pressure,
         "temperature": temperature,
@@ -99,16 +102,28 @@ if st.button("計算"):
         "fitting_counts": fitting_counts,
     }
 
-    recommended_pipe_name, delta_P, optimal_pipe_name = select_pipe(input_data)
+    result = select_pipe(input_data)
 
-    if recommended_pipe_name is None:
+    if result is None:
         st.error("Error")
     else:
-        st.write("#### 推奨配管サイズ")
-        st.info(recommended_pipe_name)
+        st.write("#### 最大流量の推奨配管サイズ")
+        st.info(result["recommended_pipe_name_max"])
 
-        st.write("#### 圧力損失")
-        st.info(f"{delta_P:.2f} kg/cm²")
+        st.write("#### 実流量の推奨配管サイズ")
+        st.info(result["recommended_pipe_name_design"])
 
         st.write("#### 最適配管サイズ")
-        st.success(optimal_pipe_name)
+        st.success(result["optimal_pipe_name"])
+
+        st.write("#### 最適配管サイズの圧力損失")
+        st.info(f"{result['delta_P']:.2f} kg/cm²")
+
+        pdf = create_pdf(result)
+
+        st.download_button(
+            "PDFダウンロード",
+            data=pdf,
+            file_name="配管計算結果.pdf",
+            mime="application/pdf",
+        )
