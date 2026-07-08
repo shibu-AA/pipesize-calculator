@@ -3,3 +3,4 @@ pandas
 ruff
 black
 pytest
+reportlab

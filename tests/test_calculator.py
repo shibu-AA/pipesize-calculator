@@ -4,17 +4,20 @@ from calc.calculator import select_pipe
 def test_select_pipe_air_basic():
     input_data = {
         "molecular_weight": 28.97,
-        "flow_rate": 1000,
-        "inlet_pressure": 0.9,
+        "max_flow_rate": 4000,
+        "inlet_pressure": 0.8,
         "outlet_pressure": 0.7,
         "temperature": 20,
         "velocity_limit": 8,
-        "schedule": "sch5",
+        "schedule": "sch10",
         "pipe_length": 1000,
-        "coefficient": 1.0,
-        "fitting_counts": [100, 0, 0, 0, 30, 10, 0],
+        "coefficient": 0.4,
+        "fitting_counts": [50, 0, 0, 0, 0, 30, 0],
     }
 
-    recommended_pipe_name, delta_p, optimal_pipe_name = select_pipe(input_data)
+    result = select_pipe(input_data)
 
-    assert optimal_pipe_name == "40A"
+    assert result["recommended_pipe_name_max"] == "40A"
+    assert result["recommended_pipe_name_design"] == "25A"
+    assert result["optimal_pipe_name"] == "32A"
+    assert result["delta_P"] == 0.46
