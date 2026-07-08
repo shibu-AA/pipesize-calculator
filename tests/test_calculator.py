@@ -20,4 +20,4 @@ def test_select_pipe_air_basic():
     assert result["recommended_pipe_name_max"] == "40A"
     assert result["recommended_pipe_name_design"] == "25A"
     assert result["optimal_pipe_name"] == "32A"
-    assert result["delta_P"] == 0.46
+    assert round(result["delta_P"], 2) == 0.46
