@@ -9,7 +9,7 @@ from reportlab.lib.enums import TA_CENTER
 pdfmetrics.registerFont(TTFont("IPAexGothic", "fonts/ipaexg.ttf"))
 
 
-def create_pdf(input_data, result):
+def create_pdf(gas_name, input_data, result):
     buffer = BytesIO()
 
     doc = SimpleDocTemplate(buffer)
@@ -20,14 +20,14 @@ def create_pdf(input_data, result):
     styles["Normal"].fontName = "IPAexGothic"
 
     left_rows = [
-        ("気体の分子量", input_data["molecular_weight"]),
-        ("流量", input_data["max_flow_rate"]),
-        ("入口圧力", input_data["inlet_pressure"]),
-        ("出力圧力", input_data["outlet_pressure"]),
-        ("基準温度", input_data["temperature"]),
-        ("許容流速", input_data["velocity_limit"]),
+        ("流体名", gas_name),
+        ("流量", str(input_data["max_flow_rate"]) + "  (L/min)"),
+        ("入口圧力", str(input_data["inlet_pressure"]) + "  (MPaG)"),
+        ("出力圧力", str(input_data["outlet_pressure"]) + "  (MPaG)"),
+        ("基準温度", str(input_data["temperature"]) + "  (℃)"),
+        ("許容流速", str(input_data["velocity_limit"]) + "  (m/s)"),
         ("配管規格", input_data["schedule"]),
-        ("管の長さ", input_data["pipe_length"]),
+        ("管の長さ", str(input_data["pipe_length"]) + "  (m)"),
         ("係数", input_data["coefficient"]),
     ]
 
@@ -73,7 +73,7 @@ def create_pdf(input_data, result):
 
         table_data.append([left[0], str(left[1]), right[0], str(right[1])])
 
-    table = Table(table_data, colWidths=[80, 60, 140, 40])
+    table = Table(table_data, colWidths=[60, 180, 120, 20])
     table.setStyle(
         TableStyle(
             [

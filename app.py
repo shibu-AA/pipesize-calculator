@@ -25,6 +25,7 @@ st.markdown("#### 入力条件")
 input_type = st.radio("① ガスの種類", ["リスト", "その他"])
 if input_type == "リスト":
     gas = st.selectbox("気体名", gas_table["気体名＋化学式"].tolist())
+    gas_name = gas_table.loc[gas_table["気体名＋化学式"] == gas, "気体名"].iloc[0]
     molecular_weight = gas_table.loc[gas_table["気体名＋化学式"] == gas, "分子量"].iloc[
         0
     ]
@@ -39,6 +40,7 @@ if input_type == "リスト":
     st.info("・".join(selected))
 elif input_type == "その他":
     molecular_weight = st.number_input("分子量", min_value=0.0, value=28.0, step=1.0)
+    gas_name = "分子量(" + str(molecular_weight) + ")"
     gas_properties = pd.Series(
         [0, 0, 0, 0, 0], index=["可燃性", "自燃性", "支燃性", "毒性", "腐食性"]
     )
@@ -119,7 +121,7 @@ if st.button("計算"):
         st.write("#### 最適配管サイズの圧力損失")
         st.info(f"{result['delta_P']:.2f} kg/cm²")
 
-        pdf = create_pdf(input_data, result)
+        pdf = create_pdf(gas_name, input_data, result)
 
         st.download_button(
             "PDFダウンロード",
