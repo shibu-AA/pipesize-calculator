@@ -32,16 +32,16 @@ if input_type == "リスト":
         gas_table["気体名＋化学式"] == gas,
         ["可燃性", "自燃性", "支燃性", "毒性", "腐食性"],
     ].iloc[0]
+
+    st.write("気体の性質 ")
+    properties = ["可燃性", "自燃性", "支燃性", "毒性", "腐食性"]
+    selected = [name for name in properties if gas_properties[name] == 1]
+    st.info("・".join(selected))
 elif input_type == "その他":
     molecular_weight = st.number_input("分子量", min_value=0.0, value=28.0, step=1.0)
     gas_properties = pd.Series(
         [0, 0, 0, 0, 0], index=["可燃性", "自燃性", "支燃性", "毒性", "腐食性"]
     )
-
-st.write("気体の性質 ")
-properties = ["可燃性", "自燃性", "支燃性", "毒性", "腐食性"]
-selected = [name for name in properties if gas_properties[name] == 1]
-st.info("・".join(selected))
 
 # ② 流量
 max_flow_rate = st.number_input(
