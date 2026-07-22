@@ -41,7 +41,7 @@ def select_pipe(input_data):
 
     # 係数をかけた流量の推奨配管サイズを求める
     design_flow_rate = (
-        (max_flow_rate * coefficient / (1000 * 60))
+        (max_flow_rate * (coefficient / 100) / (1000 * 60))
         * (101.3 / (101.3 + outlet_pressure * 1000))
         * ((273 + temperature) / 273)
     )

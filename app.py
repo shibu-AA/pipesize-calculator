@@ -70,13 +70,11 @@ velocity_limit = st.number_input(
 schedule = st.selectbox("⑦ 配管規格", ["sch10", "sch5", "BA"])
 
 # ⑧ 管の長さ
-pipe_length = st.number_input(
-    "⑧ 管の長さ (mm)", min_value=0.0, value=1000.0, step=100.0
-)
+pipe_length = st.number_input("⑧ 管の長さ (m)", min_value=0.0, value=1000.0, step=100.0)
 
 # ⑨ 係数
 coefficient = st.number_input(
-    "⑨ 係数", min_value=0.0, max_value=1.0, value=0.4, step=0.1
+    "⑨ 稼働率(%)", min_value=0, max_value=100, value=40, step=10
 )
 
 st.markdown("#### 継手入力")

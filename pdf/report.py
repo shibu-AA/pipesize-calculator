@@ -28,7 +28,7 @@ def create_pdf(gas_name, input_data, result):
         ("許容流速", str(input_data["velocity_limit"]) + "  (m/s)"),
         ("配管規格", input_data["schedule"]),
         ("管の長さ", str(input_data["pipe_length"]) + "  (m)"),
-        ("係数", input_data["coefficient"]),
+        ("稼働率", str(input_data["coefficient"]) + " (%)"),
     ]
 
     right_rows = [
