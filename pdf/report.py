@@ -61,7 +61,7 @@ def create_pdf(gas_name, input_data, result):
     result_rows = [
         ("推奨配管サイズ", result["recommended_pipe_name_design"]),
         ("最適配管サイズ", result["optimal_pipe_name"]),
-        ("配管肉径", str(pipe_thickness) + "  (mm)"),
+        ("配管肉圧", str(pipe_thickness) + "  (mm)"),
         ("摩擦係数  f", result["friction"]),
         (
             "実効配管長  L+Ln",
