@@ -17,6 +17,8 @@ gas_table = pd.read_csv("data/gas/properties.csv")
 
 st.set_page_config(page_title="配管サイズ自動算定", page_icon="🛠️", layout="centered")
 
+st.image("assets/logo.png", width=200)
+
 st.title("配管サイズ自動算定")
 
 st.markdown("#### 入力条件")
