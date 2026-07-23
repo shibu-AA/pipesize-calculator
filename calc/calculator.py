@@ -35,9 +35,11 @@ def select_pipe(input_data):
         math.sqrt((4 * actual_flow_rate) / (math.pi * velocity_limit)) * 1000
     )
 
-    recommended_pipe_name_max = pipe_table[
-        pipe_table["内径(D)(mm)"] >= required_diameter_max
-    ].iloc[0]["呼び径"]
+    candidate = pipe_table[pipe_table["内径(D)(mm)"] >= required_diameter_max]
+    if candidate.empty:
+        return None
+
+    recommended_pipe_name_max = candidate.iloc[0]["呼び径"]
 
     # 係数をかけた流量の推奨配管サイズを求める
     design_flow_rate = (
@@ -49,16 +51,14 @@ def select_pipe(input_data):
         math.sqrt((4 * design_flow_rate) / (math.pi * velocity_limit)) * 1000
     )
 
-    recommended_pipe_name_design = pipe_table[
-        pipe_table["内径(D)(mm)"] >= required_diameter_design
-    ].iloc[0]["呼び径"]
+    candidate = pipe_table[pipe_table["内径(D)(mm)"] >= required_diameter_design]
+    if candidate.empty:
+        return None
 
-    filtered_pipe_table = pipe_table[
-        pipe_table["内径(D)(mm)"] >= required_diameter_design
-    ]
+    recommended_pipe_name_design = candidate.iloc[0]["呼び径"]
 
     # 係数をかけた流量の最適配管サイズを求める
-    for _, row in filtered_pipe_table.iterrows():
+    for _, row in candidate.iterrows():
         inner_diameter = row["内径(D)(mm)"]
         friction = row["摩擦係数"]
         fluid_density = ((inlet_pressure * 10.1972 + 1.033) / 1.033 * 101325) / (
