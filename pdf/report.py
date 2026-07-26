@@ -4,7 +4,7 @@ from zoneinfo import ZoneInfo
 
 import pandas as pd
 from reportlab.lib.enums import TA_CENTER
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
