@@ -1,4 +1,5 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from io import BytesIO
 
 import pandas as pd
@@ -149,9 +150,11 @@ def create_pdf(gas_name, input_data, result):
 
     story.append(Spacer(1, 80))
 
+    today = datetime.now(ZoneInfo("Asia/Tokyo"))
+
     story.append(
         Paragraph(
-            f"<para alignment='right'>作成日：{datetime.today():%Y/%m/%d}</para>",
+            f"<para alignment='right'>作成日：{today:%Y/%m/%d}</para>",
             styles["Normal"],
         )
     )
