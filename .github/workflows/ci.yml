@@ -27,7 +27,7 @@ jobs:
           pip show ruff
 
       - name: Run Ruff
-        run: ruff check .
+        run: ruff check . --diff
       
       - name: Run Black
         run: black --check .
