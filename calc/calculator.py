@@ -58,19 +58,20 @@ def select_pipe(input_data):
 
     recommended_pipe_name_design = candidate.iloc[0]["呼び径"]
 
+    fluid_density = ((inlet_pressure * 10.1972 + 1.033) / 1.033 * 101325) / (
+        8314.3 * 293 / molecular_weight
+    )
+    equivalent_length_factor = sum(
+        [
+            fitting_counts[i] * fitting_equivalent_length_factors[i]
+            for i in range(len(fitting_counts))
+        ]
+    )
+
     # 係数をかけた流量の最適配管サイズを求める
     for _, row in candidate.iterrows():
         inner_diameter = row["内径(D)(mm)"]
         friction = row["摩擦係数"]
-        fluid_density = ((inlet_pressure * 10.1972 + 1.033) / 1.033 * 101325) / (
-            8314.3 * 293 / molecular_weight
-        )
-        equivalent_length_factor = sum(
-            [
-                fitting_counts[i] * fitting_equivalent_length_factors[i]
-                for i in range(len(fitting_counts))
-            ]
-        )
         equivalent_pipe_length = row["内径(D)(mm)"] * equivalent_length_factor / 1000
 
         velocity = 4 * design_flow_rate / (math.pi * ((inner_diameter / 1000) ** 2))
