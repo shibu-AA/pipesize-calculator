@@ -30,9 +30,20 @@ def create_pdf(gas_name, input_data, result):
     styles["Heading1"].alignment = TA_CENTER
     styles["Normal"].fontName = "IPAexGothic"
 
+    today = datetime.now(ZoneInfo("Asia/Tokyo"))
+
+    story = [
+        Paragraph(
+            f"<para alignment='right'>作成日：{today:%Y/%m/%d}</para>",
+            styles["Normal"],
+        )
+    ]
+
+    story.append(Spacer(1, 10))
+
     left_rows = [
         ("流体名", gas_name),
-        ("流量", str(input_data["max_flow_rate"]) + "  (L/min)"),
+        ("最大流量", str(input_data["max_flow_rate"]) + "  (L/min)"),
         ("入口圧力", str(input_data["inlet_pressure"]) + "  (MPaG)"),
         ("出力圧力", str(input_data["outlet_pressure"]) + "  (MPaG)"),
         ("基準温度", str(input_data["temperature"]) + "  (℃)"),
@@ -58,8 +69,9 @@ def create_pdf(gas_name, input_data, result):
     ].iloc[0]
 
     result_rows = [
-        ("推奨配管サイズ", result["recommended_pipe_name_design"]),
-        ("最適配管サイズ", result["optimal_pipe_name"]),
+        ("最大流量算定口径", result["recommended_pipe_name_max"]),
+        ("実流量算定口径", result["recommended_pipe_name_design"]),
+        ("圧損考慮採用口径", result["optimal_pipe_name"]),
         ("配管肉圧", str(pipe_thickness) + "  (mm)"),
         ("摩擦係数  f", result["friction"]),
         (
@@ -69,16 +81,21 @@ def create_pdf(gas_name, input_data, result):
         ("流体の密度  ρ", str(f"{result['fluid_density']:.4g}") + "  (kg/m³)"),
         ("流速  v", str(f"{result['velocity']:.4g}") + "  (m/s)"),
         ("配管の内径  D", str(result["inner_diameter"]) + "  (mm)"),
-        ("配管の圧力損失  ΔP", str(f"{result['delta_P']:.4g}") + "  kgf/cm³"),
+        ("配管の圧力損失  ΔP", str(f"{result['delta_P']:.4g}") + "  kgf/cm²"),
     ]
 
     def draw_logo(canvas, doc):
+        logo_width = 135
+        logo_height = 15
+
+        page_width, page_height = doc.pagesize
+
         canvas.drawImage(
             "assets/logo.png",
-            x=40,
-            y=780,
-            width=135,
-            height=15,
+            x=(page_width - logo_width) / 2,
+            y=20,
+            width=logo_width,
+            height=logo_height,
             mask="auto",
         )
 
@@ -98,11 +115,10 @@ def create_pdf(gas_name, input_data, result):
         )
     )
 
-    story = [
-        Paragraph("配管内径の算出", styles["Heading1"]),
-        table,
-        Spacer(1, 12),
-    ]
+    story.append(Paragraph("配管内径の算出", styles["Heading1"]))
+    story.append(Spacer(1, 20))
+    story.append(table)
+    story.append(Spacer(1, 20))
 
     result_table = Table(
         result_rows,
@@ -148,18 +164,7 @@ def create_pdf(gas_name, input_data, result):
     )
     story.append(Indenter(left=-90))
 
-    story.append(Spacer(1, 80))
-
-    today = datetime.now(ZoneInfo("Asia/Tokyo"))
-
-    story.append(
-        Paragraph(
-            f"<para alignment='right'>作成日：{today:%Y/%m/%d}</para>",
-            styles["Normal"],
-        )
-    )
-
-    story.append(Spacer(1, 10))
+    story.append(Spacer(1, 40))
 
     approval_table = Table(
         [
