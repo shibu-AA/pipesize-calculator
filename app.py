@@ -130,7 +130,7 @@ if st.button("計算"):
         st.write("#### 最適配管サイズ")
         st.success(result["optimal_pipe_name"])
 
-        st.write("#### 最適配管サイズの圧力損失")
+        st.write("#### 圧力損失 ΔP")
         st.info(f"{result['delta_P']:.2f} kg/cm²")
 
         pdf = create_pdf(gas_name, input_data, result, customer_name)
