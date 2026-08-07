@@ -81,11 +81,11 @@ def create_pdf(gas_name, input_data, result, customer_name):
         ("最大流量", f"{input_data['max_flow_rate']:.1f} L/min"),
         (
             "入口圧力",
-            f"{input_data['inlet_pressure']:.2f} MPaG  ({mpa_to_kgf_cm2(input_data['inlet_pressure'])} kgf/cm²G)",
+            f"{input_data['inlet_pressure']:.2f} MPaG  ({mpa_to_kgf_cm2(input_data['inlet_pressure'])} kgf/cm²)",
         ),
         (
             "出口圧力",
-            f"{input_data['outlet_pressure']:.2f} MPaG  ({mpa_to_kgf_cm2(input_data['outlet_pressure'])} kgf/cm²G)",
+            f"{input_data['outlet_pressure']:.2f} MPaG  ({mpa_to_kgf_cm2(input_data['outlet_pressure'])} kgf/cm²)",
         ),
         ("基準温度", f"{input_data['temperature']:.1f} ℃"),
         ("許容流速", f"{input_data['velocity_limit']:.2f} m/s"),
