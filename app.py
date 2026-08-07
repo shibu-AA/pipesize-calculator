@@ -80,7 +80,7 @@ pipe_length = st.number_input("⑧ 管の長さ (m)", min_value=0.0, value=1000.
 
 # ⑨ 係数
 coefficient = st.number_input(
-    "⑨ 稼働率(%)", min_value=0, max_value=100, value=40, step=10
+    "⑨ 同時使用率(%)", min_value=0, max_value=100, value=40, step=10
 )
 
 st.markdown("#### 継手入力")
