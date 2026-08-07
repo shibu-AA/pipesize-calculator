@@ -208,7 +208,7 @@ def create_pdf(gas_name, input_data, result, customer_name):
     )
     story.append(Indenter(left=-90))
 
-    story.append(Spacer(1, 40))
+    story.append(Spacer(1, 30))
 
     approval_table = Table(
         [
