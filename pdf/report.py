@@ -90,18 +90,20 @@ def create_pdf(gas_name, input_data, result, customer_name):
         ("基準温度", f"{input_data['temperature']:.1f} ℃"),
         ("許容流速", f"{input_data['velocity_limit']:.2f} m/s"),
         ("配管規格", input_data["schedule"]),
-        ("管の長さ", f"{input_data['pipe_length']:.1f} m"),
-        ("稼働率", f"{input_data['coefficient']:.1f} %"),
+        ("管の長さ  (L)", f"{input_data['pipe_length']:.1f} m"),
+        ("同時使用率", f"{input_data['coefficient']:.1f} %"),
     ]
 
     right_rows = [
-        ("90°エルボ(2･1/2まで)", input_data["fitting_counts"][0]),
-        ('90°エルボ(3"～6")', input_data["fitting_counts"][1]),
-        ("90°ベンド", input_data["fitting_counts"][2]),
-        ("45°エルボ", input_data["fitting_counts"][3]),
-        ("チーズ", input_data["fitting_counts"][4]),
-        ("弁(2･1/2まで)", input_data["fitting_counts"][5]),
-        ('弁(3"～6")', input_data["fitting_counts"][6]),
+        ("継手等個数", ""),
+        ("90°エルボ(2･1/2まで)", f"{input_data['fitting_counts'][0]} 個"),
+        ('90°エルボ(3"～6")', f"{input_data['fitting_counts'][1]} 個"),
+        ("90°ベンド", f"{input_data['fitting_counts'][2]} 個"),
+        ("45°エルボ", f"{input_data['fitting_counts'][3]} 個"),
+        ("チーズ", f"{input_data['fitting_counts'][4]} 個"),
+        ("弁(2･1/2まで)", f"{input_data['fitting_counts'][5]} 個"),
+        ('弁(3"～6")', f"{input_data['fitting_counts'][6]} 個"),
+        ("管相当長さ  (Ln)", f"{result['equivalent_pipe_length']} m"),
     ]
 
     pipe_table = pd.read_csv(f"data/pipe/{input_data['schedule']}.csv")
@@ -111,19 +113,19 @@ def create_pdf(gas_name, input_data, result, customer_name):
 
     result_rows = [
         ("最大流量算定口径", result["recommended_pipe_name_max"]),
-        ("実流量算定口径", result["recommended_pipe_name_design"]),
-        ("圧損考慮採用口径", result["optimal_pipe_name"]),
+        ("稼働率考慮算定口径", result["recommended_pipe_name_design"]),
+        ("圧力損失考慮採用算定口径", result["optimal_pipe_name"]),
         ("配管肉圧", f"{pipe_thickness} mm"),
-        ("摩擦係数  f", result["friction"]),
+        ("摩擦係数  (f)", result["friction"]),
         (
-            "実効配管長  L+Ln",
+            "実効配管長  (L+Ln)",
             f"{input_data['pipe_length'] + result['equivalent_pipe_length']} m",
         ),
-        ("流体の密度  ρ", f"{result['fluid_density']:.2f} kg/m³"),
-        ("流速  v", f"{result['velocity']:.2f} m/s"),
-        ("配管の内径  D", f"{result['inner_diameter']} mm"),
+        ("流体の密度  (ρ)", f"{result['fluid_density']:.2f} kg/m³"),
+        ("流速  (v)", f"{result['velocity']:.2f} m/s"),
+        ("配管の内径  (D)", f"{result['inner_diameter']} mm"),
         (
-            "配管の圧力損失  ΔP",
+            "配管の圧力損失  (ΔP)",
             f"{kgf_cm2_to_mpa(result['delta_P'])} MPa  ({result['delta_P']:.2f} kgf/cm²)",
         ),
     ]
@@ -150,7 +152,7 @@ def create_pdf(gas_name, input_data, result, customer_name):
 
         table_data.append([left[0], str(left[1]), right[0], str(right[1])])
 
-    table = Table(table_data, colWidths=[60, 180, 120, 20])
+    table = Table(table_data, colWidths=[80, 160, 120, 20])
     table.setStyle(
         TableStyle(
             [
@@ -186,8 +188,8 @@ def create_pdf(gas_name, input_data, result, customer_name):
     story.append(
         Image(
             "assets/pressure_loss_formula.png",
-            width=300,
-            height=45,
+            width=150,
+            height=22,
         )
     )
     story.append(Spacer(1, 12))
@@ -195,9 +197,9 @@ def create_pdf(gas_name, input_data, result, customer_name):
         "ResultStyle",
         parent=styles["Normal"],
         fontName="IPAexGothic",
-        fontSize=16,
+        fontSize=10,
     )
-    story.append(Indenter(left=90))
+    story.append(Indenter(left=140))
     story.append(
         Paragraph(
             "出口圧力 &lt; 入口圧力 - ΔP"
@@ -215,8 +217,8 @@ def create_pdf(gas_name, input_data, result, customer_name):
             ["作成", "承認"],
             ["", ""],
         ],
-        colWidths=[80, 80],
-        rowHeights=[20, 80],
+        colWidths=[50, 50],
+        rowHeights=[20, 50],
         hAlign="RIGHT",
     )
 
