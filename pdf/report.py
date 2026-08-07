@@ -34,7 +34,7 @@ def kgf_cm2_to_mpa(pressure_kgf_cm2: float) -> float:
     return round(pressure_kgf_cm2 * MPA_PER_KGF, 3)
 
 
-def create_pdf(gas_name, input_data, result):
+def create_pdf(gas_name, input_data, result, customer_name):
     buffer = BytesIO()
 
     doc = SimpleDocTemplate(buffer)
@@ -46,12 +46,33 @@ def create_pdf(gas_name, input_data, result):
 
     today = datetime.now(ZoneInfo("Asia/Tokyo"))
 
-    story = [
-        Paragraph(
-            f"<para alignment='right'>作成日：{today:%Y/%m/%d}</para>",
-            styles["Normal"],
+    header_table = Table(
+        [
+            [
+                Paragraph(
+                    customer_name,
+                    styles["Normal"],
+                ),
+                Paragraph(
+                    f"<para alignment='right'>作成日：{today:%Y/%m/%d}</para>",
+                    styles["Normal"],
+                ),
+            ]
+        ],
+        colWidths=[300, 150],
+    )
+
+    header_table.setStyle(
+        TableStyle(
+            [
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                ("ALIGN", (1, 0), (1, 0), "RIGHT"),
+                ("FONTNAME", (0, 0), (-1, -1), "IPAexGothic"),
+            ]
         )
-    ]
+    )
+
+    story = [header_table]
 
     story.append(Spacer(1, 10))
 

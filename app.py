@@ -37,7 +37,10 @@ if input_type == "リスト":
         ["可燃性", "自燃性", "支燃性", "毒性", "腐食性"],
     ].iloc[0]
 
-    st.write("気体の性質 ")
+    st.markdown(
+        "<p style='font-size: 14px;'>気体の性質</p>",
+        unsafe_allow_html=True,
+    )
     properties = ["可燃性", "自燃性", "支燃性", "毒性", "腐食性"]
     selected = [name for name in properties if gas_properties[name] == 1]
     st.info("・".join(selected))
@@ -89,6 +92,14 @@ for i, name in enumerate(fitting_names):
     val = st.number_input(name, min_value=0, step=1, value=0, key=i)
     fitting_counts.append(val)
 
+st.markdown("#### 客先名称")
+
+customer_name = st.text_input(
+    "",
+    placeholder="例：〇〇〇〇株式会社",
+    label_visibility="collapsed",
+)
+
 # 計算ボタン
 if st.button("計算"):
 
@@ -122,7 +133,7 @@ if st.button("計算"):
         st.write("#### 最適配管サイズの圧力損失")
         st.info(f"{result['delta_P']:.2f} kg/cm²")
 
-        pdf = create_pdf(gas_name, input_data, result)
+        pdf = create_pdf(gas_name, input_data, result, customer_name)
 
         st.download_button(
             "PDFダウンロード",
