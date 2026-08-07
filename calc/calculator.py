@@ -10,6 +10,8 @@ PIPE_FILES = {
 
 fitting_equivalent_length_factors = [32, 40, 24, 15, 80, 300, 300]
 
+MPA_PER_KGF = 0.098067
+
 
 def select_pipe(input_data):
 
@@ -84,7 +86,7 @@ def select_pipe(input_data):
             * 0.0001
         )
 
-        if outlet_pressure < inlet_pressure - delta_P * 0.0980665:
+        if outlet_pressure < inlet_pressure - delta_P * MPA_PER_KGF:
             return {
                 "actual_flow_rate": actual_flow_rate,
                 "recommended_pipe_name_max": recommended_pipe_name_max,

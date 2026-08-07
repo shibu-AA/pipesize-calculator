@@ -20,6 +20,20 @@ from reportlab.platypus import (
 pdfmetrics.registerFont(TTFont("IPAexGothic", "fonts/ipaexg.ttf"))
 
 
+KGF_PER_MPA = 10.197
+MPA_PER_KGF = 0.098067
+
+
+def mpa_to_kgf_cm2(pressure_mpa: float) -> float:
+    """MPa → kgf/cm²"""
+    return round(pressure_mpa * KGF_PER_MPA, 3)
+
+
+def kgf_cm2_to_mpa(pressure_kgf_cm2: float) -> float:
+    """kgf/cm² → MPa"""
+    return round(pressure_kgf_cm2 * MPA_PER_KGF, 3)
+
+
 def create_pdf(gas_name, input_data, result):
     buffer = BytesIO()
 
@@ -43,14 +57,20 @@ def create_pdf(gas_name, input_data, result):
 
     left_rows = [
         ("流体名", gas_name),
-        ("最大流量", str(input_data["max_flow_rate"]) + "  (L/min)"),
-        ("入口圧力", str(input_data["inlet_pressure"]) + "  (MPaG)"),
-        ("出力圧力", str(input_data["outlet_pressure"]) + "  (MPaG)"),
-        ("基準温度", str(input_data["temperature"]) + "  (℃)"),
-        ("許容流速", str(input_data["velocity_limit"]) + "  (m/s)"),
+        ("最大流量", f"{input_data['max_flow_rate']:.1f} L/min"),
+        (
+            "入口圧力",
+            f"{input_data['inlet_pressure']:.2f} MPaG  ({mpa_to_kgf_cm2(input_data['inlet_pressure'])} kgf/cm²G)",
+        ),
+        (
+            "出口圧力",
+            f"{input_data['outlet_pressure']:.2f} MPaG  ({mpa_to_kgf_cm2(input_data['outlet_pressure'])} kgf/cm²G)",
+        ),
+        ("基準温度", f"{input_data['temperature']:.1f} ℃"),
+        ("許容流速", f"{input_data['velocity_limit']:.2f} m/s"),
         ("配管規格", input_data["schedule"]),
-        ("管の長さ", str(input_data["pipe_length"]) + "  (m)"),
-        ("稼働率", str(input_data["coefficient"]) + "  (%)"),
+        ("管の長さ", f"{input_data['pipe_length']:.1f} m"),
+        ("稼働率", f"{input_data['coefficient']:.1f} %"),
     ]
 
     right_rows = [
@@ -72,16 +92,19 @@ def create_pdf(gas_name, input_data, result):
         ("最大流量算定口径", result["recommended_pipe_name_max"]),
         ("実流量算定口径", result["recommended_pipe_name_design"]),
         ("圧損考慮採用口径", result["optimal_pipe_name"]),
-        ("配管肉圧", str(pipe_thickness) + "  (mm)"),
+        ("配管肉圧", f"{pipe_thickness} mm"),
         ("摩擦係数  f", result["friction"]),
         (
             "実効配管長  L+Ln",
-            str(input_data["pipe_length"] + result["equivalent_pipe_length"]) + "  (m)",
+            f"{input_data['pipe_length'] + result['equivalent_pipe_length']} m",
         ),
-        ("流体の密度  ρ", str(f"{result['fluid_density']:.4g}") + "  (kg/m³)"),
-        ("流速  v", str(f"{result['velocity']:.4g}") + "  (m/s)"),
-        ("配管の内径  D", str(result["inner_diameter"]) + "  (mm)"),
-        ("配管の圧力損失  ΔP", str(f"{result['delta_P']:.4g}") + "  kgf/cm²"),
+        ("流体の密度  ρ", f"{result['fluid_density']:.2f} kg/m³"),
+        ("流速  v", f"{result['velocity']:.2f} m/s"),
+        ("配管の内径  D", f"{result['inner_diameter']} mm"),
+        (
+            "配管の圧力損失  ΔP",
+            f"{kgf_cm2_to_mpa(result['delta_P'])} MPa  ({result['delta_P']:.2f} kgf/cm²)",
+        ),
     ]
 
     def draw_logo(canvas, doc):
