@@ -44,6 +44,12 @@ def create_pdf(gas_name, input_data, result, customer_name):
     styles["Heading1"].alignment = TA_CENTER
     styles["Normal"].fontName = "IPAexGothic"
 
+    customer_style = ParagraphStyle(
+        "CustomerStyle",
+        parent=styles["Normal"],
+        fontSize=18,
+    )
+
     today = datetime.now(ZoneInfo("Asia/Tokyo"))
 
     header_table = Table(
@@ -51,7 +57,7 @@ def create_pdf(gas_name, input_data, result, customer_name):
             [
                 Paragraph(
                     customer_name,
-                    styles["Normal"],
+                    customer_style,
                 ),
                 Paragraph(
                     f"<para alignment='right'>作成日：{today:%Y/%m/%d}</para>",
@@ -112,10 +118,8 @@ def create_pdf(gas_name, input_data, result, customer_name):
     ].iloc[0]
 
     result_rows = [
-        ("最大流量算定口径", result["recommended_pipe_name_max"]),
-        ("稼働率考慮算定口径", result["recommended_pipe_name_design"]),
-        ("圧力損失考慮採用算定口径", result["optimal_pipe_name"]),
-        ("配管肉圧", f"{pipe_thickness} mm"),
+        ("最大流量の推奨配管サイズ", result["recommended_pipe_name_max"]),
+        ("実流量の推奨配管サイズ", result["recommended_pipe_name_design"]),
         ("摩擦係数  (f)", result["friction"]),
         (
             "実効配管長  (L+Ln)",
@@ -131,8 +135,8 @@ def create_pdf(gas_name, input_data, result, customer_name):
     ]
 
     def draw_logo(canvas, doc):
-        logo_width = 135
-        logo_height = 15
+        logo_width = 180
+        logo_height = 20
 
         page_width, page_height = doc.pagesize
 
@@ -199,15 +203,47 @@ def create_pdf(gas_name, input_data, result, customer_name):
         fontName="IPAexGothic",
         fontSize=10,
     )
-    story.append(Indenter(left=140))
+    story.append(Indenter(left=95))
     story.append(
         Paragraph(
-            "出口圧力 &lt; 入口圧力 - ΔP"
+            f"出口圧力({input_data['outlet_pressure']:.2f}) < 入口圧力({input_data['inlet_pressure']:.2f}) - ΔP({kgf_cm2_to_mpa(result['delta_P'])})"
             "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
             "<font color='green'><b>合格</b></font>",
             judge_style,
         )
     )
+
+    story.append(Spacer(1, 20))
+
+    optimal_table = Table(
+        [
+            ["最適配管サイズ", result["optimal_pipe_name"]],
+            ["配管肉圧", f"{pipe_thickness} mm"],
+        ],
+        colWidths=[120, 300],
+    )
+
+    optimal_table.setStyle(
+        TableStyle(
+            [
+                ("FONTNAME", (0, 0), (-1, -1), "IPAexGothic"),
+                ("FONTSIZE", (0, 0), (-1, -1), 14),
+                # 1列目を左揃え
+                ("ALIGN", (0, 0), (0, -1), "LEFT"),
+                # 2列目を中央揃え
+                ("ALIGN", (1, 0), (1, -1), "CENTER"),
+                # 左余白を統一
+                ("LEFTPADDING", (0, 0), (0, -1), 5),
+                ("TOPPADDING", (0, 0), (-1, -1), 2),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 2),
+            ]
+        )
+    )
+
+    story.append(Indenter(left=30))
+    story.append(optimal_table)
+    story.append(Indenter(left=-30))
+
     story.append(Indenter(left=-90))
 
     story.append(Spacer(1, 30))
